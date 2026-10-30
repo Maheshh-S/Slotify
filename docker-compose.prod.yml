@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: slotify-app-prod
+    ports: ["8080:8080"]
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DB_URL=jdbc:postgresql://db:5432/slotify_db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [slotify-backend]
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    container_name: slotify-db-prod
+    environment:
+      - POSTGRES_DB=slotify_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes: [slotify-postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [slotify-backend]
+    restart: unless-stopped
+
+volumes:
+  slotify-postgres-data:
+
+networks:
+  slotify-backend:
