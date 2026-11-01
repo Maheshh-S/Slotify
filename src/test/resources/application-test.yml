@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: slotify-test
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+  cache:
+    type: simple
+
+server:
+  port: 0
+
+logging:
+  level:
+    tech.mahesh.slotify: DEBUG
+    org.springframework.security: DEBUG
